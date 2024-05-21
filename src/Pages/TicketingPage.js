@@ -1,22 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Categories from '../Components/Sidebar/Categories';
 import Filter from '../Components/Sidebar/FilterTickets';
 import Ticket from '../Components/Tickets/Ticket';
 
 const TicketingPage = () => {
-  // Sample ticket data
-  const [tickets, setTickets] = useState([
-    { name: 'Ticket 1', description: 'Description of Ticket 1', priority: 'High', status: 'open' },
-    { name: 'Ticket 2', description: 'Description of Ticket 2', priority: 'Medium', status: 'resolved' },
-    { name: 'Ticket 3', description: 'Description of Ticket 3', priority: 'Low', status: 'in-progress' },
-    { name: 'Ticket 4', description: 'Description of Ticket 4', priority: 'High', status: 'closed' },
-  ]);
+  const [tickets, setTickets] = useState([]);
 
-  const [filters, setFilters] = useState({
-    assignedTo: '',
-    dateRange: '',
-    priority: '',
-  });
+  useEffect(() => {
+    fetchAllTickets();
+  }, []);
+
+  const fetchAllTickets = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/viewalltickets");
+      if (!response.ok) {
+        throw new Error("Failed to fetch tickets");
+      }
+      const data = await response.json();
+      setTickets(data.data); // Assuming the data contains an array of tickets
+    } catch (error) {
+      console.error("Error fetching tickets:", error);
+    }
+  };
 
   const handleSelectCategory = (category) => {
     console.log('Selected category:', category);
@@ -26,12 +31,37 @@ const TicketingPage = () => {
     console.log('Add new label clicked');
   };
 
-  const handleCreateTicket = () => {
-    console.log('Create ticket clicked');
+  const handleCreateTicket = (newTicket) => {
+    // You may update the tickets state with the new ticket if necessary
   };
 
-  const handleFilter = (newFilters) => {
-    setFilters(newFilters);
+  const handleFilter = async (filters) => {
+    try {
+      const query = new URLSearchParams();
+      if (filters.assignedTo) query.append('assignedTo', filters.assignedTo);
+      if (filters.priority) query.append('priority', filters.priority);
+      if (filters.startDate) query.append('startDate', filters.startDate);
+      if (filters.endDate) query.append('endDate', filters.endDate);
+
+      console.log('Filter Query:', query.toString()); // Log the query to verify it's constructed correctly
+
+      const response = await fetch(`http://localhost:3000/filterticket?${query.toString()}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to filter tickets');
+      }
+
+      const data = await response.json();
+      console.log('Filtered Tickets:', data.data); // Log the filtered tickets data
+      setTickets(data.data); // Update the tickets state with the filtered tickets
+    } catch (error) {
+      console.error('Error filtering tickets:', error);
+    }
   };
 
   return (

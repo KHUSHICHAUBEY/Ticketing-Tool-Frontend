@@ -6,13 +6,34 @@ const Filter = ({ onFilter }) => {
     const [endDate, setEndDate] = useState('');
     const [priority, setPriority] = useState('');
 
-    const handleFilter = () => {
-        const filters = {
-            assignedTo,
-            dateRange: `${startDate} to ${endDate}`,
-            priority,
-        };
-        onFilter(filters);
+    const handleFilter = async () => {
+        try {
+            const query = new URLSearchParams({
+                assignedTo,
+                priority,
+                startDate,
+                endDate
+            }).toString();
+
+            console.log('Query:', query); // Log the query to verify it's constructed correctly
+
+            const response = await fetch(`http://localhost:3000/filterticket?${query}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to filter tickets');
+            }
+
+            const data = await response.json();
+            console.log('Filtered data:', data); // Log the filtered data
+            onFilter(data.data); 
+        } catch (error) {
+            console.error('Error filtering tickets:', error);
+        }
     };
 
     return (
@@ -46,9 +67,9 @@ const Filter = ({ onFilter }) => {
                 Priority:
                 <select value={priority} onChange={(e) => setPriority(e.target.value)}>
                     <option value="">Select Priority</option>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
                 </select>
             </label>
             <button onClick={handleFilter}>Filter</button>

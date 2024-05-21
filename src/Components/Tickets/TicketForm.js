@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Ticket.css";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const TicketForm = ({ onCreateTicket, users, labels }) => {
   const [title, setTitle] = useState("");
@@ -10,6 +11,7 @@ const TicketForm = ({ onCreateTicket, users, labels }) => {
   const [status, setStatusTo] = useState("");
   const [userList, setUserList] = useState([]);
   const [labelList, setLabelList] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchUsers();
@@ -76,7 +78,7 @@ const TicketForm = ({ onCreateTicket, users, labels }) => {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include token in the Authorization header
+          Authorization: `Bearer ${token}`, 
         },
       });
 

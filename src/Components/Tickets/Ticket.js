@@ -3,45 +3,47 @@ import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import './Ticket.css';
 
 const Ticket = ({ tickets }) => {
-  const [status, setStatus] = useState('open');
+  const [status, setStatus] = useState('Open');
 
-  const filteredTickets = tickets.filter(ticket => ticket.status === status);
+  const filterTicketsByStatus = (status) => {
+    return tickets.filter(ticket => ticket.status.toLowerCase() === status.toLowerCase());
+  };
 
   return (
     <div className="ticket-container">
-        <h2>Tickets</h2>
+      <h2>Tickets</h2>
       <Tabs>
         <TabList className="tabs">
           <Tab className={`tab ${status === 'Open' ? 'active' : ''}`} onClick={() => setStatus('Open')}>Open</Tab>
           <Tab className={`tab ${status === 'Resolved' ? 'active' : ''}`} onClick={() => setStatus('Resolved')}>Resolved</Tab>
           <Tab className={`tab ${status === 'In-Progress' ? 'active' : ''}`} onClick={() => setStatus('In-Progress')}>In-Progress</Tab>
           <Tab className={`tab ${status === 'Closed' ? 'active' : ''}`} onClick={() => setStatus('Closed')}>Closed</Tab>
-          
         </TabList>
-{console.log(filteredTickets)}
+
         <TabPanel>
-          <h3>Open Tickets</h3>
+          <h3>{status} Tickets</h3>
           <ul className="ticket-list">
-            {filteredTickets.map((ticket, index) => (
+            {filterTicketsByStatus(status).map((ticket, index) => (
               <li key={index} className="ticket-item">
                 <div className="ticket-info">
                   <p>
-                    Ticket Name: {ticket.name}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
+                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
                   </p>
                 </div>
               </li>
             ))}
           </ul>
         </TabPanel>
-        
+
+        {/* Add additional TabPanel for other status */}
         <TabPanel>
           <h3>Resolved Tickets</h3>
           <ul className="ticket-list">
-            {filteredTickets.map((ticket, index) => (
+            {filterTicketsByStatus('Resolved').map((ticket, index) => (
               <li key={index} className="ticket-item">
                 <div className="ticket-info">
                   <p>
-                    Ticket Name: {ticket.name}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
+                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
                   </p>
                 </div>
               </li>
@@ -52,11 +54,11 @@ const Ticket = ({ tickets }) => {
         <TabPanel>
           <h3>In-Progress Tickets</h3>
           <ul className="ticket-list">
-            {filteredTickets.map((ticket, index) => (
+            {filterTicketsByStatus('In-Progress').map((ticket, index) => (
               <li key={index} className="ticket-item">
                 <div className="ticket-info">
                   <p>
-                    Ticket Name: {ticket.name}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
+                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
                   </p>
                 </div>
               </li>
@@ -67,18 +69,18 @@ const Ticket = ({ tickets }) => {
         <TabPanel>
           <h3>Closed Tickets</h3>
           <ul className="ticket-list">
-            {filteredTickets.map((ticket, index) => (
+            {filterTicketsByStatus('Closed').map((ticket, index) => (
               <li key={index} className="ticket-item">
                 <div className="ticket-info">
                   <p>
-                    Ticket Name: {ticket.name}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
+                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
                   </p>
                 </div>
               </li>
             ))}
           </ul>
         </TabPanel>
-        
+
       </Tabs>
     </div>
   );
