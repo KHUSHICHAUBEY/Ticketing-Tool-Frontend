@@ -2,13 +2,21 @@ import React, { useState, useEffect } from 'react';
 import Categories from '../Components/Sidebar/Categories';
 import Filter from '../Components/Sidebar/FilterTickets';
 import Ticket from '../Components/Tickets/Ticket';
+import Filtered from '../Components/Tickets/Filtered';
 
-const TicketingPage = () => {
+const TicketingPage = ({ filteredTickets, onFilter }) => {
   const [tickets, setTickets] = useState([]);
+  const [filters, setFilters] = useState({
+    assignedTo: '',
+    dateRange: '',
+    priority: '',
+  });
 
   useEffect(() => {
-    fetchAllTickets();
-  }, []);
+    if (!filteredTickets || filteredTickets.length === 0) {
+      fetchAllTickets();
+    }
+  }, [filteredTickets]);
 
   const fetchAllTickets = async () => {
     try {
@@ -20,6 +28,7 @@ const TicketingPage = () => {
       setTickets(data.data); // Assuming the data contains an array of tickets
     } catch (error) {
       console.error("Error fetching tickets:", error);
+      // Handle error
     }
   };
 
@@ -32,48 +41,34 @@ const TicketingPage = () => {
   };
 
   const handleCreateTicket = (newTicket) => {
-    // You may update the tickets state with the new ticket if necessary
+    // Handle new ticket creation logic
   };
 
-  const handleFilter = async (filters) => {
-    try {
-      const query = new URLSearchParams();
-      if (filters.assignedTo) query.append('assignedTo', filters.assignedTo);
-      if (filters.priority) query.append('priority', filters.priority);
-      if (filters.startDate) query.append('startDate', filters.startDate);
-      if (filters.endDate) query.append('endDate', filters.endDate);
-
-      console.log('Filter Query:', query.toString()); // Log the query to verify it's constructed correctly
-
-      const response = await fetch(`http://localhost:3000/filterticket?${query.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to filter tickets');
-      }
-
-      const data = await response.json();
-      console.log('Filtered Tickets:', data.data); // Log the filtered tickets data
-      setTickets(data.data); // Update the tickets state with the filtered tickets
-    } catch (error) {
-      console.error('Error filtering tickets:', error);
-    }
+  const handleFilter = (filterCriteria) => {
+    onFilter(filterCriteria);
   };
 
   return (
-    <div>
-      <h1>Ticketing Page</h1>
-      <Categories
-        onSelectCategory={handleSelectCategory}
-        onAddNewLabel={handleAddNewLabel}
-        onCreateTicket={handleCreateTicket}
-      />
-      <Filter onFilter={handleFilter} />
-      <Ticket tickets={tickets} />
+    <div className='ticketing-page'>
+      <div className='sidebar'>
+        <div className='left-bar'>
+          <Categories
+            onSelectCategory={handleSelectCategory}
+            onAddNewLabel={handleAddNewLabel}
+            onCreateTicket={handleCreateTicket}
+          />
+        {/* </div>
+        <div> */}
+          <Filter onFilter={handleFilter} />
+        </div>
+      </div>
+      <div className='content'>
+        {filteredTickets && filteredTickets.length > 0 ? (
+          <Filtered tickets={filteredTickets} />
+        ) : (
+          <Ticket tickets={tickets} />
+        )}
+      </div>
     </div>
   );
 };

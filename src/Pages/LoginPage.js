@@ -22,7 +22,7 @@ const LoginPage = ({ onLogin }) => {
     };
 
     return (
-        <div className="login-page">
+        <div className="login-page" >
             <h2>Hey! Welcome to the login page</h2>
             {isLoggedIn ? (
                 <div>

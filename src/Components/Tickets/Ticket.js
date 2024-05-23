@@ -1,13 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { useTable } from 'react-table';
+import 'react-tabs/style/react-tabs.css';
 import './Ticket.css';
 
 const Ticket = ({ tickets }) => {
   const [status, setStatus] = useState('Open');
 
+  const columns = useMemo(
+    () => [
+      {
+        Header: 'Title',
+        accessor: 'title',
+      },
+      {
+        Header: 'Description',
+        accessor: 'description',
+      },
+      {
+        Header: 'Priority',
+        accessor: 'priority',
+      },
+      {
+        Header: 'Status',
+        accessor: 'status',
+      },
+    ],
+    []
+  );
+
   const filterTicketsByStatus = (status) => {
     return tickets.filter(ticket => ticket.status.toLowerCase() === status.toLowerCase());
   };
+
+  const data = useMemo(() => filterTicketsByStatus(status), [status, tickets]);
+
+  const tableInstance = useTable({ columns, data });
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = tableInstance;
 
   return (
     <div className="ticket-container">
@@ -22,63 +58,110 @@ const Ticket = ({ tickets }) => {
 
         <TabPanel>
           <h3>{status} Tickets</h3>
-          <ul className="ticket-list">
-            {filterTicketsByStatus(status).map((ticket, index) => (
-              <li key={index} className="ticket-item">
-                <div className="ticket-info">
-                  <p>
-                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table {...getTableProps()} className="ticket-table">
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </TabPanel>
 
-        {/* Add additional TabPanel for other status */}
         <TabPanel>
           <h3>Resolved Tickets</h3>
-          <ul className="ticket-list">
-            {filterTicketsByStatus('Resolved').map((ticket, index) => (
-              <li key={index} className="ticket-item">
-                <div className="ticket-info">
-                  <p>
-                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table {...getTableProps()} className="ticket-table">
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </TabPanel>
 
         <TabPanel>
           <h3>In-Progress Tickets</h3>
-          <ul className="ticket-list">
-            {filterTicketsByStatus('In-Progress').map((ticket, index) => (
-              <li key={index} className="ticket-item">
-                <div className="ticket-info">
-                  <p>
-                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table {...getTableProps()} className="ticket-table">
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </TabPanel>
 
         <TabPanel>
           <h3>Closed Tickets</h3>
-          <ul className="ticket-list">
-            {filterTicketsByStatus('Closed').map((ticket, index) => (
-              <li key={index} className="ticket-item">
-                <div className="ticket-info">
-                  <p>
-                    Ticket Name: {ticket.title}, Description: {ticket.description}, Priority: {ticket.priority}, Status: {ticket.status}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <table {...getTableProps()} className="ticket-table">
+            <thead>
+              {headerGroups.map(headerGroup => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                  {headerGroup.headers.map(column => (
+                    <th {...column.getHeaderProps()}>{column.render('Header')}</th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody {...getTableBodyProps()}>
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()}>
+                    {row.cells.map(cell => (
+                      <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </TabPanel>
 
       </Tabs>

@@ -17,9 +17,6 @@ const Categories = ({ onSelectCategory, onCreateTicket }) => {
         const data = await response.json();
         console.log(data);
         setCategories(data.labels);
-      // } catch (error) {
-      //   console.log('Error fetching categories:', error);
-      // }
     };
     
     fetchCategories();
@@ -69,7 +66,10 @@ const Categories = ({ onSelectCategory, onCreateTicket }) => {
         ))}
       </ul>
       <div>
-        <Link to="#" onClick={handleAddNewLabel} className="add-label-link">ADD A NEW LABEL</Link>
+        {/* <link to="#" onClick={handleAddNewLabel} className="add-label-link">ADD A NEW LABEL</link> */}
+        <div className='new-label'>
+        <button onClick={handleAddNewLabel}>Add Label</button>
+</div>
         {showInput && (
           <div className='new-label'>
             <input
